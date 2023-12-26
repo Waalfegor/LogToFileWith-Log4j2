@@ -15,31 +15,13 @@
             </Policies>
         </RollingFile>
 
-        <RollingFile name="File"
-                     fileName="./demo/src/main/resources/puk.log"
-                     filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
-            <PatternLayout>
-                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
-            </PatternLayout>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB" />
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
-
     </Appenders>
 
     <Loggers>
 
         <Root level="warn">
             <AppenderRef ref="RollingFile" />
-            <AppenderRef ref="File" />
         </Root>
-
-        <Logger name="com.example.demo" level="warn">
-            <AppenderRef ref="File" />
-        </Logger>
 
     </Loggers>
 
