@@ -3,7 +3,7 @@
     <Appenders>
 
         <RollingFile name="RollingFile"
-                     fileName="./grid-center.log"
+                     fileName="./puk.log"
                      filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
@@ -16,7 +16,7 @@
         </RollingFile>
 
         <RollingFile name="File"
-                     fileName="./demo/src/main/resources/grid-center.log"
+                     fileName="./demo/src/main/resources/puk.log"
                      filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
@@ -32,12 +32,12 @@
 
     <Loggers>
 
-        <Root level="info">
+        <Root level="warn">
             <AppenderRef ref="RollingFile" />
             <AppenderRef ref="File" />
         </Root>
 
-        <Logger name="com.example.demo" level="trace">
+        <Logger name="com.example.demo" level="warn">
             <AppenderRef ref="File" />
         </Logger>
 

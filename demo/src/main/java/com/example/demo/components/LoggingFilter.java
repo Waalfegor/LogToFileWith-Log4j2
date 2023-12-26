@@ -4,31 +4,41 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
-
 
 /** */
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
     /** */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingFilter.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(LoggingFilter.class);
 
     /** */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        if (response.getCharacterEncoding() == null) {
+            response.setCharacterEncoding("UTF-8"); // Or whatever default. UTF-8 is good for World Domination.
+        }
+
+        HttpServletResponseCopier responseCopier = new HttpServletResponseCopier(response);
+
         long startTime = System.currentTimeMillis();
-        filterChain.doFilter(request, response);
+
+        filterChain.doFilter(request, responseCopier);
+        responseCopier.flushBuffer();
+
+        byte[] copy = responseCopier.getCopy();
+        String responseBody = new String(copy);
 
         long duration = System.currentTimeMillis() - startTime;
 
-        String logMessage = String.format("request method: %s, request URI: %s, response status: %d, request processing time: %d ms",
-                request.getMethod(), request.getRequestURI(), response.getStatus(), duration);
-        LOGGER.info(logMessage);
+        LOGGER.warn("request method: {}, request URI: {}, response status: {}, response body: {}," +
+                        " request processing time: {} ms",
+                request.getMethod(), request.getRequestURI(), response.getStatus(), responseBody, duration);
     }
 
 }
